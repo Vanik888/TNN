@@ -30,7 +30,6 @@ parser.add_argument(
     action='store_true',
     default=False,
     help='whether to generate inputs and outputs'
-
 )
 parser.add_argument(
     '-N',
@@ -46,7 +45,6 @@ parser.add_argument(
     required=True,
     help='size of output M <= 30'
 )
-
 
 
 def fill_weights(n_len, m_len,

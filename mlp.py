@@ -36,6 +36,7 @@ def load_weights(n_len, m_len, from_file=False):
                     for i in xrange(m_len)] for j in xrange(n_len)])
     return W
 
+
 # vector X=(N+1) vector Y=(M)
 X, Y = load_input_and_output()
 # weights matrix W=(N+1)xM
