@@ -12,7 +12,7 @@ n_max_len = 101
 m_max_len = 30
 max_weight = 0.5
 min_weight = -0.5
-input_file = 'PA-A-train.dat'
+train_file = 'PA-A-train.dat'
 weights_file = 'PA-A-weights.dat'
 
 parser = argparse.ArgumentParser(description='Generate file with random values for input and output')
@@ -61,12 +61,12 @@ def fill_weights(n_len, m_len,
     """
     print('generating weights')
     with open(file, 'wr') as f:
-        for n in xrange(n_len):
-            for m in xrange(m_len):
+        for n in xrange(m_len):
+            for m in xrange(n_len+1):
                 f.write("%s " % ra.uniform(left_border, right_border))
             f.write('\n')
-    print('weights matrix %sx%s successfully saved in %s' % (n_len,
-                                                             m_len,
+    print('weights matrix %sx%s successfully saved in %s' % (m_len,
+                                                             n_len+1,
                                                              weights_file
                                                              ))
 
@@ -74,7 +74,7 @@ def fill_weights(n_len, m_len,
 def fill_input_and_output(n_len, m_len,
                           x_min_val=x_min_val, x_max_val=x_max_val,
                           y_min_val=y_min_val, y_max_val=y_max_val,
-                          file=input_file):
+                          file=train_file):
     """
     :param n_len: len of input vector N
     :param m_len:  len of output vector M
