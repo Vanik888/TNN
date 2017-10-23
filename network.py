@@ -1,15 +1,14 @@
 import numpy as np
 import random as ra
 
-from pylab import ylim, plot, show
+from pylab import ylim, plot, show, subplot
 
 from file_generator import max_weight, min_weight, train_file, weights_file
 
-class Perceptron:
+class Network:
     """
-    Defines a class for a Perceptron
+    Defines a class for a Neural network
     """
-    w = None
 
     def __init__(self, train_file=train_file, weights_from_file=False):
         """
@@ -70,18 +69,13 @@ class Perceptron:
         else:
             return 1/(1+np.exp(-x))
 
-    def get_weights(self):
+    def calculate_weights(self):
         """
-        Returns the weights of the weight matrix.
-        Format for a perceptron with one output unit.
-        [wb, w1, ..... wn]
-        :return:
+        calculates weights for network
         """
-        return self.w
-
-    def calc(self):
         self.errors = []
-        for i in xrange(70000):
+        print("Calculating weights")
+        for i in xrange(10000):
             w = self.w
             x = self.x
             # input of input layer Px(N+1)
@@ -94,12 +88,18 @@ class Perceptron:
             self.errors.append(error)
             delta_error = error*self.trans_function(result, True)
             w += np.dot(delta_error, input0)
+
+        print("Calculated weights: ")
         print(w)
+        print('Done!')
         self.w = w
 
     def draw_errors(self):
+        """
+        Draws graph with errors
+        """
         ylim(-1, 1)
-        c = []
+        outputs = []
         # 0..m
         for k in xrange(len(self.errors[0])):
             v = []
@@ -110,24 +110,10 @@ class Perceptron:
                 for i in xrange(len(self.errors)):
                     m.append(self.errors[i][k][j])
                 v.append(m)
-            c.append(v)
-        print(len(c[0]))
-        # plot(c[0])
+            outputs.append(v)
 
-        # show()
-
-    def fprop(self, x):
-        """
-        Forward propagates an input vector through the perceptron
-
-        Args:
-        ----
-        x: vector of training exemplar
-        """
-        assert x is not None
-        print x.shape
-        x = np.append([1], x, axis=0)
-        if len(x.shape) == 1:
-            x = np.expand_dims(x, axis=1)
-        return np.where(np.dot(self.w, x) > 0, 1, 0)
-
+        for ou in outputs:
+            for i, item in enumerate(ou):
+                subplot(220+i)
+                plot(item)
+        show()
