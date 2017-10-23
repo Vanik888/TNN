@@ -126,6 +126,7 @@ if __name__ == '__main__':
             exit(1)
         elif p > max_p:
             print("Error P=%s should be <= %s" % (p, max_p))
+            exit(1)
         fill_input_and_output(p, n_len, m_len)
     if args.generate_weights:
         fill_weights(n_len, m_len)
