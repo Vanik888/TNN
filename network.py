@@ -78,6 +78,7 @@ class Network:
         for i in xrange(10000):
             w = self.w
             x = self.x
+            eta = 1.1
             # input of input layer Px(N+1)
             input0 = x
             # input of second layer (Mx(N+1))x((N+1)xP) -> MxP
@@ -86,7 +87,7 @@ class Network:
             result = self.trans_function(input1)
             error = self.y.T - result
             self.errors.append(error)
-            delta_error = error*self.trans_function(result, True)
+            delta_error = eta*error*self.trans_function(result, True)
             w += np.dot(delta_error, input0)
 
         print("Calculated weights: ")
