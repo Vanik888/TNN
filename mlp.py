@@ -1,12 +1,21 @@
 #!/usr/bin/env python2.7
 
+import argparse
+
 from perceptron import Perceptron
 from file_generator import train_file
 
-# vector X=(N+1) vector Y=(M)
-# X, Y = load_input_and_output()
-# weights matrix W=(N+1)xM
-# W = load_weights(len(X), len(Y), from_file=False)
-# print(W)
-p = Perceptron(train_file, True)
+parser = argparse.ArgumentParser('MLP argparser')
+parser.add_argument(
+    '--read_weights',
+    action='store_true',
+    default=False,
+    help='if true then weights would be loaded from file'
+)
+
+if __name__ == '__main__':
+    args = parser.parse_args()
+    p = Perceptron(train_file, args.read_weights)
+    p.calc()
+    p.draw_errors()
 print(p.w)

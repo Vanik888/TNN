@@ -3,7 +3,7 @@ import argparse
 import random as ra
 from numpy import random
 
-
+max_p = 199
 x_max_val = 1
 y_max_val = 1
 x_min_val = 0
@@ -32,11 +32,11 @@ parser.add_argument(
     help='whether to generate inputs and outputs'
 )
 parser.add_argument(
-    '-N',
+    '-P',
     type=int,
-    default=n_max_len,
+    default=max_p,
     required=True,
-    help='size of input N <= 101'
+    help='amount of train results'
 )
 parser.add_argument(
     '-M',
@@ -44,6 +44,13 @@ parser.add_argument(
     default=m_max_len,
     required=True,
     help='size of output M <= 30'
+)
+parser.add_argument(
+    '-N',
+    type=int,
+    default=n_max_len,
+    required=True,
+    help='size of input N <= 101'
 )
 
 
@@ -71,10 +78,11 @@ def fill_weights(n_len, m_len,
                                                              ))
 
 
-def fill_input_and_output(n_len, m_len,
+def fill_input_and_output(p, n_len, m_len,
                           x_min_val=x_min_val, x_max_val=x_max_val,
                           y_min_val=y_min_val, y_max_val=y_max_val,
-                          file=train_file):
+                          file=train_file,
+                          ):
     """
     :param n_len: len of input vector N
     :param m_len:  len of output vector M
@@ -88,16 +96,19 @@ def fill_input_and_output(n_len, m_len,
     with open(file, 'wr') as f:
         print('generating %s inputs' % n_len)
         f.write('#input\n')
-        X = random.randint(x_min_val, x_max_val+1, n_len)
-        for x in X:
-            f.write("%s " % str(x))
+        for i in xrange(p):
+            X = random.randint(x_min_val, x_max_val+1, n_len)
+            for x in X:
+                f.write("%s " % str(x))
+            f.write('\n')
 
         print('generating %s outputs' % m_len)
-        f.write('\n#output\n')
-        Y = random.randint(y_min_val, y_max_val+1, m_len)
-        for y in Y:
-            f.write("%s " % str(y))
-        f.write("\n")
+        f.write('#output\n')
+        for i in xrange(p):
+            Y = random.randint(y_min_val, y_max_val+1, m_len)
+            for y in Y:
+                f.write("%s " % str(y))
+            f.write("\n")
         print('inputs and outputs successfully saved in %s' % file)
 
 
@@ -105,14 +116,17 @@ if __name__ == '__main__':
     args = parser.parse_args()
     n_len = args.N
     m_len = args.M
+    p = args.P
     if args.inputs_and_outputs:
         if n_len > n_max_len:
-            print("Error: %s should be <= %s" % (n_len, n_max_len))
+            print("Error: N=%s should be <= %s" % (n_len, n_max_len))
             exit(1)
         elif m_len > m_max_len:
-            print("Error %s should be <= %s" % (m_len, m_max_len))
+            print("Error M=%s should be <= %s" % (m_len, m_max_len))
             exit(1)
-        fill_input_and_output(n_len, m_len)
+        elif p > max_p:
+            print("Error P=%s should be <= %s" % (p, max_p))
+        fill_input_and_output(p, n_len, m_len)
     if args.generate_weights:
         fill_weights(n_len, m_len)
 

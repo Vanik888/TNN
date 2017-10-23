@@ -1,6 +1,8 @@
 import numpy as np
 import random as ra
 
+from pylab import ylim, plot, show
+
 from file_generator import max_weight, min_weight, train_file, weights_file
 
 class Perceptron:
@@ -15,7 +17,9 @@ class Perceptron:
         :param weights_from_file: whether read weights from file
         """
         self.x, self.y = self.init_input_and_output(train_file)
-        self.w = self.init_weights(len(self.x), len(self.y), weights_from_file)
+        self.w = self.init_weights(self.x.shape[1],
+                                   self.y.shape[1],
+                                   weights_from_file)
 
     @staticmethod
     def init_weights(n_len, m_len, from_file=False):
@@ -41,23 +45,30 @@ class Perceptron:
         :param file: filename with training data X, Y
         :return: arrays X (including bias) and Y
         """
+
+        def _create_int_array(lines):
+            return np.array([[int(item) for item in l.split()] for l in lines])
+
         with open(file, 'r') as f:
             lines = [l.replace('\n', '') for l in f.readlines()]
-        lines = list(
-            filter(lambda l: not (l.startswith('#') or l.startswith('\n')),
-                   lines))
-        data = [[int(item) for item in l.split()] for l in lines]
+
+        x_lines = lines[1:lines.index('#output')]
+        y_lines = lines[lines.index('#output')+1:]
+
+        X = _create_int_array(x_lines)
         # add bias in X[0]
-        X = np.insert(np.array(data[0]), 0, 1)
-        Y = np.array(data[1])
-        return X.T, Y.T
+        extended_ones = np.ones((X.shape[0], X.shape[1]+1))
+        extended_ones[:, 1:] = X
+        X = extended_ones
+        Y = _create_int_array(y_lines)
+        return X, Y
 
     @staticmethod
     def trans_function(x, derivative=False):
         if derivative:
             return x*(1-x)
         else:
-            return 1/(1-np.exp(-x))
+            return 1/(1+np.exp(-x))
 
     def get_weights(self):
         """
@@ -67,6 +78,43 @@ class Perceptron:
         :return:
         """
         return self.w
+
+    def calc(self):
+        self.errors = []
+        for i in xrange(70000):
+            w = self.w
+            x = self.x
+            # input of input layer Px(N+1)
+            input0 = x
+            # input of second layer (Mx(N+1))x((N+1)xP) -> MxP
+            input1 = np.dot(w, input0.T)
+            # output of second layer MxP
+            result = self.trans_function(input1)
+            error = self.y.T - result
+            self.errors.append(error)
+            delta_error = error*self.trans_function(result, True)
+            w += np.dot(delta_error, input0)
+        print(w)
+        self.w = w
+
+    def draw_errors(self):
+        ylim(-1, 1)
+        c = []
+        # 0..m
+        for k in xrange(len(self.errors[0])):
+            v = []
+            # 0..p
+            for j in xrange(len(self.errors[0][0])):
+                m = []
+                # 0..i
+                for i in xrange(len(self.errors)):
+                    m.append(self.errors[i][k][j])
+                v.append(m)
+            c.append(v)
+        print(len(c[0]))
+        # plot(c[0])
+
+        # show()
 
     def fprop(self, x):
         """
@@ -83,15 +131,3 @@ class Perceptron:
             x = np.expand_dims(x, axis=1)
         return np.where(np.dot(self.w, x) > 0, 1, 0)
 
-
-# p = Perceptron(3, 3)
-# p.get_weights()
-
-# print p.fprop(np.array([1, 0, 1]))
-
-# A = np.array([[2,3,4],[3,4,5]])
-# B = np.array([[2,3,4],[3,4,5]])
-
-# C = np.dot(A,np.transpose(B))
-
-# print C
