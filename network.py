@@ -20,6 +20,9 @@ class Network:
                                    self.y.shape[1],
                                    weights_from_file)
 
+    def __repr__(self):
+        return "x:\n%s\n y:\n%s" % (str(self.x), str(self.y))
+
     @staticmethod
     def init_weights(n_len, m_len, from_file=False):
         """
@@ -75,7 +78,7 @@ class Network:
         """
         self.errors = []
         print("Calculating weights")
-        for i in xrange(10000):
+        for i in xrange(10001):
             w = self.w
             x = self.x
             eta = 1.1
@@ -89,7 +92,8 @@ class Network:
             self.errors.append(error)
             delta_error = eta*error*self.trans_function(result, True)
             w += np.dot(delta_error, input0)
-
+            if i % 1000 == 0:
+                print("iteration %s, errors: \n%s" % (i, str(error)))
         print("Calculated weights: ")
         print(w)
         print('Done!')

@@ -23,6 +23,7 @@ parser.add_argument(
 if __name__ == '__main__':
     args = parser.parse_args()
     network = Network(train_file, args.read_weights)
+    print(network)
     network.calculate_weights()
     if args.draw_errors:
         network.draw_errors()
