@@ -1,3 +1,7 @@
+### Assignment №2
+Python implementation of two-layers perzeptron (full task is defined in
+[WS17_4204_exercises_02.pdf](https://github.com/Vanik888/TNN/blob/master/WS17_4204_exercises_02.pdf))
+
 ### Basic comands to generate inputs, outputs and weights
 * Generating inputs, outputs and weights
 ```
